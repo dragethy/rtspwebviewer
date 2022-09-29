@@ -18,7 +18,7 @@ import os
 
 
 # Initialize a flask object
-app = flask.Flask(__name__, template_folder=os.path.abspath('./'))
+app = flask.Flask(__name__)
 
 # Initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful when multiple browsers/tabs

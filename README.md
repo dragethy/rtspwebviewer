@@ -34,21 +34,12 @@ Run
  
  Build Docker image
 -------------------
-1. Configure Docker image, edit [docker/Dockerfile](docker/Dockerfile) and fill it with your RTSP stream and web server information:
-```
-# rtspwebviewer config
-ENV RWV_RTSP_ADDRESS=<rtsp_address>
-ENV RWV_LISTENING_IP=<web_server_listening_ip>
-ENV RMV_PORT=<web_server_listening_port>
-ENV RMV_TITLE=<website_title>
-```
-
-2. Build Docker image:
+1. Build Docker image:
 ```bash
 $ docker build -t rtspwebviewer docker
 ```
 
-3. Deploy container:
+2. Deploy container:
 ```bash
-$ docker run --name rtspwebviewer rtspwebviewer:latest /bin/bash -c 'sleep infinity'
+$ docker run --name rtspwebviewer rtspwebviewer:latest /bin/zsh -c ''
 ```

@@ -44,7 +44,7 @@ RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && pyenv install $PYTHON_VERS
 RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSION"
 
 # Install OpenCV
-RUN sudo -u $USER python -m pip install opencv-python
+RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
 # TODO: Install rtspwebviewer
 

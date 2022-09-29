@@ -36,7 +36,6 @@ Run
 -------------------
 
 ```bash
-$ cd docker
-$ docker build -t rtspwebviewer .
+$ docker build -t rtspwebviewer docker
 ```
 

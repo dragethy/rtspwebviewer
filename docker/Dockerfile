@@ -23,10 +23,8 @@ ENV LC_ALL en_US.UTF-8
 ENV USER="docker"
 ENV PASSWD="docker"
 ENV HOME="/home/$USER"
-ADD files/uid.txt /tmp/uid.txt
 RUN DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-passlib
-RUN groupadd -g $(cat /tmp/uid.txt) $USER
-RUN useradd -m -u $(cat /tmp/uid.txt) -g $(cat /tmp/uid.txt) -p "$(python3 -c 'import os; import passlib.hash; print(passlib.hash.sha512_crypt.hash(os.getenv("PASSWD")))')" -s /bin/zsh $USER
+RUN useradd -m -p "$(python3 -c 'import os; import passlib.hash; print(passlib.hash.sha512_crypt.hash(os.getenv("PASSWD")))')" -s /bin/zsh $USER
 RUN usermod -a -G sudo $USER
 RUN touch $HOME/.zshrc && chown $USER:$USER $HOME/.zshrc
 

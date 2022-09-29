@@ -8,6 +8,12 @@ LABEL maintainer="luiscarlos.gph@gmail.com"
 LABEL version="0.1"
 LABEL description="Image with support for: CUDA, pyenv, and rtspwebviewer."
 
+# rtspwebviewer config
+ENV RWV_RTSP_ADDRESS=
+ENV RWV_LISTENING_IP=
+ENV RMV_PORT=
+ENV RMV_TITLE=
+
 # Install commonly used packages
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt upgrade -y
@@ -46,10 +52,11 @@ RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSI
 # Install OpenCV
 RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
-# TODO: Install rtspwebviewer
+# Install rtspwebviewer
+RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
 
 # Open web server port
-EXPOSE 22
+EXPOSE $RMV_PORT
 
 # Start services and run the user-specified command
 ADD files/entrypoint.sh /opt/entrypoint.sh

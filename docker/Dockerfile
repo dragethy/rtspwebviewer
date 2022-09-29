@@ -8,12 +8,6 @@ LABEL maintainer="luiscarlos.gph@gmail.com"
 LABEL version="0.1"
 LABEL description="Image with support for: CUDA, pyenv, and rtspwebviewer."
 
-# rtspwebviewer config
-ENV RWV_RTSP_ADDRESS=
-ENV RWV_LISTENING_IP=
-ENV RMV_PORT=
-ENV RMV_TITLE=
-
 # Install commonly used packages
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt upgrade -y

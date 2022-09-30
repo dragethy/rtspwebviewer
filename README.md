@@ -14,6 +14,8 @@ Install from source
 -------------------
 
 ```bash
+$ git clone git@github.com:luiscarlosgph/rtspwebviewer.git
+$ cd rtspwebviewer
 $ python3 setup.py install
 ```
 
@@ -36,6 +38,8 @@ Run Docker container
 ---------------------
 1. Build Docker image:
 ```bash
+$ git clone git@github.com:luiscarlosgph/rtspwebviewer.git
+$ cd rtspwebviewer
 $ docker build -t rtspwebviewer docker
 ```
 

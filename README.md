@@ -47,5 +47,5 @@ $ docker build -t rtspwebviewer docker
 
 2. Deploy container:
 ```bash
-$ docker run --name rtspwebviewer rtspwebviewer:latest '/bin/zsh -c "source /root/.zshrc && python -m rtspwebviewer.run -u <rtsp_address> -a <listening_ip_address> -p <port> -t <web_title>"'
+$ docker run --name rtspwebviewer --net=host rtspwebviewer:latest '/bin/zsh -c "source /root/.zshrc && python -m rtspwebviewer.run -u <rtsp_address> -a <listening_ip_address> -p <port> -t <web_title>"'
 ```

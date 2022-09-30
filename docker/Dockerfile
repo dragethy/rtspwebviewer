@@ -19,35 +19,30 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# Add user 'docker' with password 'docker' and give sudo powers
-ENV USER="docker"
-ENV PASSWD="docker"
-ENV HOME="/home/$USER"
-RUN DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-passlib
-RUN useradd -m -p "$(python3 -c 'import os; import passlib.hash; print(passlib.hash.sha512_crypt.hash(os.getenv("PASSWD")))')" -s /bin/zsh $USER
-RUN usermod -a -G sudo $USER
-RUN touch $HOME/.zshrc && chown $USER:$USER $HOME/.zshrc
+# Define essential environment variables
+ENV USER="root"
+ENV HOME="/$USER"
 
 # Intall oh-my-zsh so we have a nice terminal
-RUN sudo -u $USER wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O $HOME/install.sh
-RUN sudo -u $USER chmod +x $HOME/install.sh 
-RUN sudo -u $USER $HOME/install.sh --unattended
-RUN sudo -u $USER sed -i 's/robbyrussell/terminalparty/g' $HOME/.zshrc
+RUN wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O $HOME/install.sh
+RUN chmod +x $HOME/install.sh 
+RUN $HOME/install.sh --unattended
+RUN sed -i 's/robbyrussell/terminalparty/g' $HOME/.zshrc
 
 # Install Python's pyenv environment
 ENV PYTHON_VERSION="3.9.13"
-RUN sudo -u $USER git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv
-RUN sudo -u $USER echo 'export PYENV_ROOT="$HOME/.pyenv"' >> $HOME/.zshrc
-RUN sudo -u $USER echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> $HOME/.zshrc
-RUN sudo -u $USER echo 'eval "$(pyenv init --path)"' >> $HOME/.zshrc
-RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && pyenv install $PYTHON_VERSION"
-RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSION"
+RUN git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv
+RUN echo 'export PYENV_ROOT="$HOME/.pyenv"' >> $HOME/.zshrc
+RUN echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> $HOME/.zshrc
+RUN echo 'eval "$(pyenv init --path)"' >> $HOME/.zshrc
+RUN /bin/zsh -c "source $HOME/.zshrc && pyenv install $PYTHON_VERSION"
+RUN /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSION"
 
 # Install OpenCV
-RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
+RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
 # Install rtspwebviewer
-RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
+RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
 
 # Open web server port
 #EXPOSE $RMV_PORT

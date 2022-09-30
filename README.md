@@ -39,11 +39,11 @@ Run Docker container
 If you do not have Docker installed, you have an install guide [here](https://github.com/luiscarlosgph/how-to/tree/main/docker).
 
 1. Build Docker image:
-  ```bash
-  $ git clone https://github.com/luiscarlosgph/rtspwebviewer.git
-  $ cd rtspwebviewer
-  $ docker build -t rtspwebviewer docker
-  ```
+   ```bash
+   $ git clone https://github.com/luiscarlosgph/rtspwebviewer.git
+   $ cd rtspwebviewer
+   $ docker build -t rtspwebviewer docker
+   ```
 
 2. Deploy container:
   ```bash

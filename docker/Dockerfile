@@ -50,7 +50,7 @@ RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install open
 RUN sudo -u $USER /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
 
 # Open web server port
-EXPOSE $RMV_PORT
+#EXPOSE $RMV_PORT
 
 # Start services and run the user-specified command
 ADD files/entrypoint.sh /opt/entrypoint.sh

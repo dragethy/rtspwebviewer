@@ -6,7 +6,7 @@ Web server that displays an RTSP video stream.
 Use case
 --------
 
-You have a security camera that streams in [RTSP](https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol) (many security cameras do) and want to make the video accessible via web.
+You have a security camera that streams in [RTSP](https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol) (e.g. [Foscam](https://www.amazon.co.uk/Foscam-Wireless-Indoor-Security-Camera/dp/B07WHY74F1)) and want to make the video accessible via web.
 
 Install with pip
 ----------------

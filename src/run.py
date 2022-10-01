@@ -84,7 +84,6 @@ class RTSPVideoStream:
         
         # Initialise video capture
         self.stream = cv2.VideoCapture(self.url)
-        #(self.grabbed, frame) = self.stream.read()
 
     def start(self):
         """@brief Call this method to launch the capture thread."""
@@ -123,25 +122,28 @@ def display_frame():
         with lock:
             if output_frame is None:
                 continue
+            # Encode the frame in JPEG
             (success, encoded_im) = cv2.imencode('.jpg', output_frame)
             if not success:
                 continue
+
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' \
             + bytearray(encoded_im) + b'\r\n')
 
 
-def preprocess_frame(width: int = 1024):
+def preprocess_frame():
     """ 
     @brief Function to preprocess the frames before displaying them.
            At the moment it does not do anything.
     @returns nothing.
     """
+    #global vs, output_frame, lock, window_width
     global vs, output_frame, lock
     
     while True:
         frame = vs.read()
         if frame is not None:
-            #frame = imutils.resize(frame, width=width)
+            # NOTE: Preprocess frame here if you wish
             with lock:
                 output_frame = frame.copy()
 
@@ -149,17 +151,14 @@ def preprocess_frame(width: int = 1024):
 @app.route('/' + args.password)
 def index():
     """@returns the rendered template."""
-    global args
+    global args, window_width, window_height
     return flask.render_template('index.html', title=args.title)
 
 
 @app.route('/' + args.password + '/video_feed')
 def video_feed():
-    global output_frame, lock
-	# return the response generated along with the specific media
-	# type (mime type)
-    return flask.Response(display_frame(),
-        mimetype='multipart/x-mixed-replace; boundary=frame')
+    """@returns the response generated along with the specific media type (mime type)."""
+    return flask.Response(display_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def main():

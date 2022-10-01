@@ -1,4 +1,4 @@
-# @brief  Image with support for: CUDA, pyenv, and rtspwebviewer.
+# @brief  Image with support for: pyenv and rtspwebviewer.
 # @author Luis C. Garcia Peraza Herrera (luiscarlos.gph@gmail.com).
 # @date   10 September 2022.
 
@@ -6,7 +6,7 @@
 FROM ubuntu:latest
 LABEL maintainer="luiscarlos.gph@gmail.com"
 LABEL version="0.1"
-LABEL description="Image with support for: CUDA, pyenv, and rtspwebviewer."
+LABEL description="Image with support for: pyenv, and rtspwebviewer."
 
 # Install commonly used packages
 RUN apt update
@@ -43,9 +43,6 @@ RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
 # Install rtspwebviewer
 RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
-
-# Open web server port
-#EXPOSE $RMV_PORT
 
 # Start services and run the user-specified command
 ADD files/entrypoint.sh /opt/entrypoint.sh

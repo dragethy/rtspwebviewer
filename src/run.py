@@ -58,7 +58,7 @@ def parse_cmdline_params():
                         help=help('-p'))
     parser.add_argument('-t', '--title', required=True, type=str,
                         help=help('-t'))
-    parser.add_argument('-w', '--password', required=True, type=str,
+    parser.add_argument('-w', '--password', required=False, default='', type=str,
                         help=help('-w'))
 
     # Read parameters

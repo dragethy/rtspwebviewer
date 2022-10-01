@@ -33,9 +33,9 @@ Run
   ```
   In this case, you should access [http://127.0.0.1:7654/fancypassword](http://127.0.0.1:7654/fancypassword) to see the website displaying the video stream. 
   
-The IP address `0.0.0.0` means that the web server will listen in all your network interfaces. 
+  The IP address `0.0.0.0` means that the web server will listen in all your network interfaces. 
 
-The password parameter is optional, if you do not specify one, you should access [http://127.0.0.1:7654](http://127.0.0.1:7654) to see the video.
+  The password parameter is optional, if you do not specify one, you should access [http://127.0.0.1:7654](http://127.0.0.1:7654) to see the video.
   
  
 Run Docker container

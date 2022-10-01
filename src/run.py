@@ -29,8 +29,45 @@ lock = threading.Lock()
 # Initialise video stream object so that it is accessible from the Flask functions
 vs = None
 
-# Initialise command line arguments
-args = None
+
+def help(short_option):
+    """
+    @returns The string with the help information for each command 
+             line option.
+    """
+    help_msg = {
+        '-t': 'Web title (required: True)',
+        '-u': 'RTSP URL (required: True)',
+        '-a': 'The HTTP server will listen in this address (required: True)',
+        '-p': 'The HTTP server will listen in this TCP port (required: True)',
+        '-w': 'URL-based password (required: True)',
+    }
+    return help_msg[short_option]
+
+
+def parse_cmdline_params():
+    """@returns The argparse args object."""
+
+    # Create command line parser
+    parser = argparse.ArgumentParser(description='PyTorch segmenter.')
+    parser.add_argument('-u', '--url', required=True, type=str, 
+                        help=help('-u'))
+    parser.add_argument('-a', '--address', required=True, type=str, 
+                        help=help('-a'))
+    parser.add_argument('-p', '--port', required=True, type=int,
+                        help=help('-p'))
+    parser.add_argument('-t', '--title', required=True, type=str,
+                        help=help('-t'))
+    parser.add_argument('-w', '--password', required=True, type=str,
+                        help=help('-w'))
+
+    # Read parameters
+    args = parser.parse_args()
+    
+    return args
+
+# Get command line arguments
+args = parse_cmdline_params()
 
 
 class RTSPVideoStream:
@@ -76,43 +113,6 @@ class RTSPVideoStream:
         self.stopped = True
 
 
-def help(short_option):
-    """
-    @returns The string with the help information for each command 
-             line option.
-    """
-    help_msg = {
-        '-t': 'Web title (required: True)',
-        '-u': 'RTSP URL (required: True)',
-        '-a': 'The HTTP server will listen in this address (required: True)',
-        '-p': 'The HTTP server will listen in this TCP port (required: True)',
-        '-w': 'URL-based password (required: True)',
-    }
-    return help_msg[short_option]
-
-
-def parse_cmdline_params():
-    """@returns The argparse args object."""
-
-    # Create command line parser
-    parser = argparse.ArgumentParser(description='PyTorch segmenter.')
-    parser.add_argument('-u', '--url', required=True, type=str, 
-                        help=help('-u'))
-    parser.add_argument('-a', '--address', required=True, type=str, 
-                        help=help('-a'))
-    parser.add_argument('-p', '--port', required=True, type=int,
-                        help=help('-p'))
-    parser.add_argument('-t', '--title', required=True, type=str,
-                        help=help('-t'))
-    parser.add_argument('-w', '--password', required=True, type=str,
-                        help=help('-w'))
-
-    # Read parameters
-    args = parser.parse_args()
-    
-    return args
-
-
 def display_frame():
     """
     @brief Display the most recent frame on the website.
@@ -153,7 +153,7 @@ def index():
     return flask.render_template('index.html', title=args.title)
 
 
-@app.route('/' + args.password + 'video_feed')
+@app.route('/' + args.password + '/video_feed')
 def video_feed():
     global output_frame, lock
 	# return the response generated along with the specific media
@@ -164,9 +164,6 @@ def video_feed():
 
 def main():
     global app, vs, args
-    
-    # Read command line parameters
-    args = parse_cmdline_params()
     
     # Initialise the video stream and allow the camera sensor to warmup
     vs = RTSPVideoStream(url=args.url).start()

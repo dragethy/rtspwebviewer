@@ -86,6 +86,7 @@ def help(short_option):
         '-u': 'RTSP URL (required: True)',
         '-a': 'The HTTP server will listen in this address (required: True)',
         '-p': 'The HTTP server will listen in this TCP port (required: True)',
+        '-w': 'URL-based password (required: True)',
     }
     return help_msg[short_option]
 
@@ -103,6 +104,8 @@ def parse_cmdline_params():
                         help=help('-p'))
     parser.add_argument('-t', '--title', required=True, type=str,
                         help=help('-t'))
+    parser.add_argument('-w', '--password', required=True, type=str,
+                        help=help('-w'))
 
     # Read parameters
     args = parser.parse_args()
@@ -143,14 +146,14 @@ def preprocess_frame(width: int = 1024):
                 output_frame = frame.copy()
 
 
-@app.route('/')
+@app.route('/' + args.password)
 def index():
     """@returns the rendered template."""
     global args
     return flask.render_template('index.html', title=args.title)
 
 
-@app.route('/video_feed')
+@app.route('/' + args.password + 'video_feed')
 def video_feed():
     global output_frame, lock
 	# return the response generated along with the specific media

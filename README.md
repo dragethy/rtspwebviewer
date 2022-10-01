@@ -3,7 +3,9 @@ Description
 
 Web server that displays an RTSP video stream. 
 
-It is not a very efficient solution in terms of video transmission, but you will be able to see the video stream from all devices (Windows, Linux, Mac, iPhone, Android). Audio is not supported.
+It is not a very efficient solution in terms of video transmission, but you will be able to see the video stream from all devices (Windows, Linux, Mac, iPhone, Android). 
+
+Audio is not supported.
 
 Use case
 --------

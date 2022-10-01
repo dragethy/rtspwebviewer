@@ -31,7 +31,11 @@ Run
   ```bash
   $ python rtspwebviewer.run -u 'rtsp://user:pass@127.0.0.1:8669/unicast' -a 0.0.0.0 -p 7654 -t 'RTSP Web Viewer' -w fancypassword
   ```
-  In this case, you should access [http://127.0.0.1:7654/fancypassword](http://127.0.0.1:7654/fancypassword) to see the website displaying the video stream. The IP address `0.0.0.0` means that the web server will listen in all your network interfaces. The password parameter is optional, if you do not specify one, you should access [http://127.0.0.1:7654](http://127.0.0.1:7654) to see the video.
+  In this case, you should access [http://127.0.0.1:7654/fancypassword](http://127.0.0.1:7654/fancypassword) to see the website displaying the video stream. 
+  
+The IP address `0.0.0.0` means that the web server will listen in all your network interfaces. 
+
+The password parameter is optional, if you do not specify one, you should access [http://127.0.0.1:7654](http://127.0.0.1:7654) to see the video.
   
  
 Run Docker container

@@ -3,6 +3,11 @@ Description
 
 Web server that displays an RTSP video stream.
 
+Use case
+--------
+
+You have a security camera that streams in [RTSP](https://en.wikipedia.org/wiki/Real_Time_Streaming_Protocol) (many security cameras do) and want to make the video accessible via web.
+
 Install with pip
 ----------------
 

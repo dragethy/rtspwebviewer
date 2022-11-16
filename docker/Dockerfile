@@ -41,9 +41,6 @@ RUN /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSION"
 # Install OpenCV
 RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
-# Install ffmpeg
-RUN DEBIAN_FRONTEND=noninteractive apt install -y ffmpeg
-
 # Install rtspwebviewer
 RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
 

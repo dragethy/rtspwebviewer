@@ -33,12 +33,12 @@ Run
 
 * Syntax:
   ```bash
-  $ python rtspwebviewer.run -u <rtsp_address> -a <listening_ip_address> -p <port> -t <web_title> -w <password>
+  $ python -m rtspwebviewer.run -u <rtsp_address> -a <listening_ip_address> -p <port> -t <web_title> -w <password>
   ```
 
 * Example:
   ```bash
-  $ python rtspwebviewer.run -u 'rtsp://user:pass@127.0.0.1:8669/unicast' -a 0.0.0.0 -p 7654 -t 'RTSP Web Viewer' -w fancypassword
+  $ python -m rtspwebviewer.run -u 'rtsp://user:pass@127.0.0.1:8669/unicast' -a 0.0.0.0 -p 7654 -t 'RTSP Web Viewer' -w fancypassword
   ```
   In this case, you should access [http://127.0.0.1:7654/fancypassword](http://127.0.0.1:7654/fancypassword) to see the website displaying the video stream. 
   

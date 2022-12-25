@@ -175,7 +175,11 @@ def main():
     t.start() 
 
     # Start the flask app
-    app.run(host=args.address, port=args.port, debug=False, threaded=True, use_reloader=False)
+    # app.run(host=args.address, port=args.port, debug=False, threaded=True, use_reloader=False)
+    
+    # Launch web server
+    http_server = gevent.pywsgi.WSGIServer((args.address, args.port), app)
+    http_server.serve_forever()
 
     # Stop the input video stream
     vs.stop()

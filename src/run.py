@@ -99,14 +99,14 @@ class RTSPVideoStream:
             (self.grabbed, frame) = self.stream.read()
             if self.grabbed:
                 self.frame = frame
-            else:
-                print('[ERROR] Reading stream. Re-opening videoc capture.')
-                self.stream = cv2.VideoCapture(self.url)
-                time.sleep(self.reopen_interval)
+            #else:
+            #    print('[ERROR] Reading stream. Re-opening videoc capture.')
+            #    self.stream = cv2.VideoCapture(self.url)
+            #    time.sleep(self.reopen_interval)
 
     def read(self):
         """@returns the frame most recently read."""
-        return self.frame
+        return self.frame.copy()
 
     def stop(self):
         """@brief Indicate that the thread should be stopped."""
@@ -146,7 +146,7 @@ def preprocess_frame():
         if frame is not None:
             # NOTE: Preprocess frame here if you wish
             with lock:
-                output_frame = frame.copy()
+                output_frame = frame
 
 
 @app.route('/' + args.password)

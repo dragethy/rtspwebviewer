@@ -106,7 +106,7 @@ class RTSPVideoStream:
 
     def read(self):
         """@returns the frame most recently read."""
-        return self.frame.copy()
+        return self.frame
 
     def stop(self):
         """@brief Indicate that the thread should be stopped."""

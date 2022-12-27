@@ -115,7 +115,7 @@ class RTSPVideoStream:
         ffmpeg_process = (
         ffmpeg
         .input(self.url, **ffmpeg_args)
-        .output('pipe:', format='rawvideo', pix_fmt='rgb24')
+        .output('pipe:', format='rawvideo', pix_fmt='rgb24', vsync=2)
         .overwrite_output()
         .run_async(pipe_stdout=True)
         )

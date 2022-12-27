@@ -16,6 +16,8 @@ import imutils
 import gevent.pywsgi
 import flask
 import os
+import ffmpeg
+import numpy as np
 
 
 # Initialize a flask object
@@ -80,11 +82,10 @@ class RTSPVideoStream:
         self.url = url
         self.reopen_interval = reopen_interval
         self.stopped = False
-        self.grabbed = False
         self.frame = None
         
         # Initialise video capture
-        self.stream = cv2.VideoCapture(self.url)
+        #self.stream = cv2.VideoCapture(self.url)
 
     def start(self):
         """@brief Call this method to launch the capture thread."""
@@ -93,16 +94,39 @@ class RTSPVideoStream:
 
     def update(self):
         """brief Keep looping infinitely until the thread is stopped."""
+        # Get stream dimensions
+        cap = cv2.VideoCapture(self.url)
+        grabbed = False
+        frame = None
+        while not grabbed:
+            grabbed, frame = cap.read()
+        width = frame.shape[1]
+        height = frame.shape[0]
+        cap.release()
+
+        # Launch ffmpeg capture process
+        print('[INFO] Launching ffmpeg ...')
+        ffmpeg_args = {
+            "hwaccel": "cuda",
+            "rtsp_transport": "tcp",
+            "fflags": "nobuffer",
+            "flags": "low_delay",
+        }
+        ffmpeg_process = (
+        ffmpeg
+        .input(self.url, **ffmpeg_args)
+        .output('pipe:', format='rawvideo', pix_fmt='rgb24')
+        .overwrite_output()
+        .run_async(pipe_stdout=True)
+        )
+        print('[INFO] ffmpeg is now running.')
+
         while True:
             if self.stopped:
                 return
-            (self.grabbed, frame) = self.stream.read()
-            if self.grabbed:
-                self.frame = frame
-            #else:
-            #    print('[ERROR] Reading stream. Re-opening videoc capture.')
-            #    self.stream = cv2.VideoCapture(self.url)
-            #    time.sleep(self.reopen_interval)
+            in_bytes = ffmpeg_process.stdout.read(width * height * 3)
+            if in_bytes:
+                self.frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3])[...,::-1].copy()
 
     def read(self):
         """@returns the frame most recently read."""
@@ -167,17 +191,14 @@ def main():
     
     # Initialise the video stream and allow the camera sensor to warmup
     vs = RTSPVideoStream(url=args.url).start()
-    warmup_time_s = 2
-    time.sleep(warmup_time_s)
+    #warmup_time_s = 2
+    #time.sleep(warmup_time_s)
 
     # Launch frame preprocessor
     t = threading.Thread(target=preprocess_frame, args=())
     t.daemon = True
     t.start() 
 
-    # Start the flask app
-    # app.run(host=args.address, port=args.port, debug=False, threaded=True, use_reloader=False)
-    
     # Launch web server
     http_server = gevent.pywsgi.WSGIServer((args.address, args.port), app)
     http_server.serve_forever()

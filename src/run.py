@@ -26,11 +26,11 @@ app = flask.Flask(__name__)
 # Initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful when multiple browsers/tabs
 # are viewing the stream)
-output_frame = None
-lock = threading.Lock()
+output_frames = []
+locks = []
 
 # Initialise video stream object so that it is accessible from the Flask functions
-vs = None
+streams = []
 
 
 def help(short_option):
@@ -53,7 +53,7 @@ def parse_cmdline_params():
 
     # Create command line parser
     parser = argparse.ArgumentParser(description='PyTorch segmenter.')
-    parser.add_argument('-u', '--url', required=True, type=str, 
+    parser.add_argument('-u', '--url', required=True, nargs='+', default=[]
                         help=help('-u'))
     parser.add_argument('-a', '--address', required=True, type=str, 
                         help=help('-a'))
@@ -66,7 +66,7 @@ def parse_cmdline_params():
 
     # Read parameters
     args = parser.parse_args()
-    
+
     return args
 
 # Get command line arguments
@@ -84,9 +84,6 @@ class RTSPVideoStream:
         self.stopped = False
         self.frame = None
         
-        # Initialise video capture
-        #self.stream = cv2.VideoCapture(self.url)
-
     def start(self):
         """@brief Call this method to launch the capture thread."""
         threading.Thread(target=self.update, args=()).start()
@@ -137,18 +134,23 @@ class RTSPVideoStream:
         self.stopped = True
 
 
-def display_frame():
+def display_frame(idx: int):
     """
     @brief Display the most recent frame on the website.
+
+    @param[in]  idx  RTSP stream index. The command line option --url supports
+                     a list of RTSP streams (up to 4). This index refers to 
+                     that list.
+
     @returns the last frame encoded as HTTP payload.
     """
-    global output_frame, lock
+    global output_frames, locks
     while True:
-        with lock:
-            if output_frame is None:
+        with locks[idx]:
+            if output_frames[idx] is None:
                 continue
             # Encode the frame in JPEG
-            (success, encoded_im) = cv2.imencode('.jpg', output_frame)
+            (success, encoded_im) = cv2.imencode('.jpg', output_frames[idx])
             if not success:
                 continue
 
@@ -162,15 +164,15 @@ def preprocess_frame():
            At the moment it does not do anything.
     @returns nothing.
     """
-    #global vs, output_frame, lock, window_width
-    global vs, output_frame, lock
+    global streams, output_frames, locks
     
     while True:
-        frame = vs.read()
-        if frame is not None:
-            # NOTE: Preprocess frame here if you wish
-            with lock:
-                output_frame = frame
+        for i, vs in enumerate(streams):
+            frame = vs.read()
+            if frame is not None:
+                # NOTE: Preprocess frame here if you wish
+                with locks[i]:
+                    output_frames[i] = frame
 
 
 @app.route('/' + args.password)
@@ -180,19 +182,84 @@ def index():
     return flask.render_template('index.html', title=args.title)
 
 
+@app.route('/' + args.password + '/camera_1x1')
+def camera_1x1():
+    """
+    @returns the response generated along with the specific media type 
+             (mime type).
+    """
+    mimetype = 'multipart/x-mixed-replace; boundary=frame'
+    return flask.Response(display_frame(0), mimetype=mimetype)
+
+
+@app.route('/' + args.password + '/camera_1x2')
+def camera_1x2():
+    """
+    @returns the response generated along with the specific media type 
+             (mime type).
+    """
+    global streams
+    retval = None
+
+    if len(streams) > 1:
+        mimetype = 'multipart/x-mixed-replace; boundary=frame'
+        retval = flask.Response(display_frame(1), mimetype=mimetype)
+    else:
+        retval = flask.Response(status=204)  # 204: HTTP No Content
+
+    return retval
+
+
+@app.route('/' + args.password + '/camera_2x1')
+def camera_2x1():
+    """
+    @returns the response generated along with the specific media type 
+             (mime type).
+    """
+    global streams
+    retval = None
+
+    if len(streams) > 2:
+        mimetype = 'multipart/x-mixed-replace; boundary=frame'
+        retval = flask.Response(display_frame(2), mimetype=mimetype) 
+    else:
+        retval = flask.Response(status=204)
+    
+    return retval
+
+
+@app.route('/' + args.password + '/camera_2x2')
+def camera_2x2():
+    """
+    @returns the response generated along with the specific media type 
+             (mime type).
+    """
+    global streams
+    retval = None
+    
+    if len(streams) > 3:
+        mimetype = 'multipart/x-mixed-replace; boundary=frame'
+        retval = flask.Response(display_frame(3), mimetype=mimetype)
+    else:
+        retval = flask.Response(status=204)
+
+    return retval
+
+
+"""
 @app.route('/' + args.password + '/video_feed')
 def video_feed():
     """@returns the response generated along with the specific media type (mime type)."""
     return flask.Response(display_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
+"""
 
 
 def main():
-    global app, vs, args
-    
-    # Initialise the video stream and allow the camera sensor to warmup
-    vs = RTSPVideoStream(url=args.url).start()
-    #warmup_time_s = 2
-    #time.sleep(warmup_time_s)
+    global app, streams, locks, args
+
+    # Initialise as many input video stream readers as the user wants
+    locks = [ threading.Lock() for _ in args.url ]
+    streams = [ RTSPVideoStream(url=u).start() for u in args.url ]
 
     # Launch frame preprocessor
     t = threading.Thread(target=preprocess_frame, args=())
@@ -203,8 +270,9 @@ def main():
     http_server = gevent.pywsgi.WSGIServer((args.address, args.port), app)
     http_server.serve_forever()
 
-    # Stop the input video stream
-    vs.stop()
+    # Stop the input video streams
+    for stream in streams:
+        stream.stop()
 
 
 if __name__ == '__main__':

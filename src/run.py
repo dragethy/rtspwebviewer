@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 @brief    Software to launch a web server that displays an RTSP stream.
-@details  Code inspired by: https://towardsdatascience.com/video-streaming-in-web-browsers-
-                            with-opencv-flask-93a38846fe00
+@details  Code inspired by: 
+              
+              https://towardsdatascience.com/video-streaming-in-web-browsers-
+              with-opencv-flask-93a38846fe00
 
 @author Luis C. Garcia Peraza Herrera (luiscarlos.gph@gmail.com).
 @date   10 Sep 2022.
@@ -53,7 +55,7 @@ def parse_cmdline_params():
 
     # Create command line parser
     parser = argparse.ArgumentParser(description='PyTorch segmenter.')
-    parser.add_argument('-u', '--url', required=True, nargs='+', default=[]
+    parser.add_argument('-u', '--url', required=True, nargs='+', default=[],
                         help=help('-u'))
     parser.add_argument('-a', '--address', required=True, type=str, 
                         help=help('-a'))

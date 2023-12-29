@@ -251,7 +251,7 @@ def camera_2x2():
 """
 @app.route('/' + args.password + '/video_feed')
 def video_feed():
-    """@returns the response generated along with the specific media type (mime type)."""
+    #@returns the response generated along with the specific media type (mime type).
     return flask.Response(display_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 """
 

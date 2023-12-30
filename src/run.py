@@ -18,7 +18,7 @@ import imutils
 import gevent.pywsgi
 import flask
 import os
-import ffmpeg
+#import ffmpeg
 import numpy as np
 
 
@@ -76,9 +76,19 @@ args = parse_cmdline_params()
 
 
 class RTSPVideoStream:
+    """
+    @class RTSPVideoStream is a reader of RTSP video frames that runs on a
+           different thread.
+    """
+
     def __init__(self, url=None, reopen_interval=2):
         """
-        @param[in]  url  RTSP URL, e.g.: rtsp://<user>:<password>@<ip>:<port>/unicast
+        @param[in]  url              RTSP URL.
+        @param[in]  reopen_interval  When a read() error is detected by the
+                                     video capture object, the video capture
+                                     is restarted. After the restart we sleep
+                                     for 'reopen_interval' seconds before
+                                     reading new frames.
         """
         # Initialise attributes
         self.url = url
@@ -93,39 +103,20 @@ class RTSPVideoStream:
 
     def update(self):
         """brief Keep looping infinitely until the thread is stopped."""
-        # Get stream dimensions
+        # Initialise video capture
         cap = cv2.VideoCapture(self.url)
-        grabbed = False
-        frame = None
-        while not grabbed:
-            grabbed, frame = cap.read()
-        width = frame.shape[1]
-        height = frame.shape[0]
-        cap.release()
 
-        # Launch ffmpeg capture process
-        print('[INFO] Launching ffmpeg ...')
-        ffmpeg_args = {
-            "hwaccel": "cuda",
-            "rtsp_transport": "tcp",
-            "fflags": "nobuffer",
-            "flags": "low_delay",
-        }
-        ffmpeg_process = (
-        ffmpeg
-        .input(self.url, **ffmpeg_args)
-        .output('pipe:', format='rawvideo', pix_fmt='rgb24', vsync=2)
-        .overwrite_output()
-        .run_async(pipe_stdout=True)
-        )
-        print('[INFO] ffmpeg is now running.')
-
+        # Read from the RTSP stream forever
         while True:
             if self.stopped:
                 return
-            in_bytes = ffmpeg_process.stdout.read(width * height * 3)
-            if in_bytes:
-                self.frame = np.frombuffer(in_bytes, np.uint8).reshape([height, width, 3])[...,::-1].copy()
+            (grabbed, frame) = cap.read()
+            if grabbed:
+                self.frame = frame
+            else:
+                print('[ERROR] Reading stream. Re-opening videoc capture.')
+                cap = cv2.VideoCapture(self.url)
+                time.sleep(self.reopen_interval)
 
     def read(self):
         """@returns the frame most recently read."""
@@ -248,19 +239,12 @@ def camera_2x2():
     return retval
 
 
-"""
-@app.route('/' + args.password + '/video_feed')
-def video_feed():
-    #@returns the response generated along with the specific media type (mime type).
-    return flask.Response(display_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
-"""
-
-
 def main():
-    global app, streams, locks, args
+    global args, app, streams, locks, output_frames 
 
     # Initialise as many input video stream readers as the user wants
     locks = [ threading.Lock() for _ in args.url ]
+    output_frames = [ None for _ in args.url ]
     streams = [ RTSPVideoStream(url=u).start() for u in args.url ]
 
     # Launch frame preprocessor

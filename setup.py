@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(name='rtspwebviewer',
-    version='0.1.2',
+    version='0.1.3',
     description='Simple web viewer for RTSP streams.',
     author='Luis C. Garcia-Peraza Herrera',
     author_email='luiscarlos.gph@gmail.com',
@@ -24,7 +24,6 @@ setuptools.setup(name='rtspwebviewer',
         'imutils',
         'flask',
         'gevent',
-        'ffmpeg-python',
     ],
     long_description=long_description,
     long_description_content_type='text/markdown',

@@ -42,7 +42,7 @@ RUN /bin/zsh -c "source $HOME/.zshrc && pyenv global $PYTHON_VERSION"
 RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install opencv-python"
 
 # Install rtspwebviewer
-RUN /bin/zsh -c "source $HOME/.zshrc && python -m pip install rtspwebviewer"
+RUN /bin/zsh -c "source $HOME/.zshrc && cd /opt && git clone https://github.com/luiscarlosgph/rtspwebviewer.git && cd rtspwebviewer && python setup.py install"
 
 # Start services and run the user-specified command
 ADD files/entrypoint.sh /opt/entrypoint.sh

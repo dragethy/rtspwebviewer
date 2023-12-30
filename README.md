@@ -33,12 +33,13 @@ Run
 
 * Syntax:
   ```bash
-  $ python -m rtspwebviewer.run -u <rtsp_address> -a <listening_ip_address> -p <port> -t <web_title> -w <password>
+  $ python -m rtspwebviewer.run -a <listening_ip_address> -p <port> -t <web_title> -w <password> -u <rtsp_address>
   ```
+  You can specify up to four RTSP addresses, e.g. `-u <rtsp_address> <rtsp_address> <rtsp_address> <rtsp_address>`
 
 * Example:
   ```bash
-  $ python -m rtspwebviewer.run -u 'rtsp://user:pass@127.0.0.1:8669/unicast' -a 0.0.0.0 -p 7654 -t 'RTSP Web Viewer' -w fancypassword
+  $ python -m rtspwebviewer.run -a 0.0.0.0 -p 7654 -t 'RTSP Web Viewer' -w fancypassword -u 'rtsp://user:pass@127.0.0.1:8669/unicast'
   ```
   In this case, you should access [http://127.0.0.1:7654/fancypassword](http://127.0.0.1:7654/fancypassword) to see the website displaying the video stream. 
   
@@ -60,7 +61,7 @@ If you do not have Docker installed, you have an install guide [here](https://gi
 
 2. Deploy container:
    ```bash
-   $ docker run -it --name rtspwebviewer --net=host --restart=always rtspwebviewer:latest python -m rtspwebviewer.run -u <rtsp_address> -a <listening_address> -p <listening_port> -t <web_title> -w <web_password> &
+   $ docker run -it --name rtspwebviewer --net=host --restart=always rtspwebviewer:latest python -m rtspwebviewer.run -a <listening_address> -p <listening_port> -t <web_title> -w <web_password> -u <rtsp_address> &
    ```
    Access the camera view in `http://<ip>:<port>/<web_password>`
    

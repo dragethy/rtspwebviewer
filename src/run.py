@@ -183,61 +183,6 @@ def camera_1x1():
     mimetype = 'multipart/x-mixed-replace; boundary=frame'
     return flask.Response(display_frame(0), mimetype=mimetype)
 
-
-@app.route('/' + args.password + '/camera_1x2')
-def camera_1x2():
-    """
-    @returns the response generated along with the specific media type 
-             (mime type).
-    """
-    global streams
-    retval = None
-
-    if len(streams) > 1:
-        mimetype = 'multipart/x-mixed-replace; boundary=frame'
-        retval = flask.Response(display_frame(1), mimetype=mimetype)
-    else:
-        retval = flask.Response(status=204)  # 204: HTTP No Content
-
-    return retval
-
-
-@app.route('/' + args.password + '/camera_2x1')
-def camera_2x1():
-    """
-    @returns the response generated along with the specific media type 
-             (mime type).
-    """
-    global streams
-    retval = None
-
-    if len(streams) > 2:
-        mimetype = 'multipart/x-mixed-replace; boundary=frame'
-        retval = flask.Response(display_frame(2), mimetype=mimetype) 
-    else:
-        retval = flask.Response(status=204)
-    
-    return retval
-
-
-@app.route('/' + args.password + '/camera_2x2')
-def camera_2x2():
-    """
-    @returns the response generated along with the specific media type 
-             (mime type).
-    """
-    global streams
-    retval = None
-    
-    if len(streams) > 3:
-        mimetype = 'multipart/x-mixed-replace; boundary=frame'
-        retval = flask.Response(display_frame(3), mimetype=mimetype)
-    else:
-        retval = flask.Response(status=204)
-
-    return retval
-
-
 def main():
     global args, app, streams, locks, output_frames 
 
